@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\PersonDetailService;
+use App\Models\PersonalDetail;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class PersonalDetailController extends Controller
 {
@@ -13,19 +17,19 @@ class PersonalDetailController extends Controller
         $this->personDetailService = $personDetailService;
     }
 
-    public function getPersonalDetails($userEmail)
+    public function getPersonalDetails(User $user)
     {
-        $personalDetail = PersonalDetail::where('email', $userEmail)->first();
+        $personalDetail = PersonalDetail::where('user_id', $user->id)->first();
 
         if ($personalDetail && $this->isFresh($personalDetail->updated_at)) {
             return response()->json($personalDetail);
         }
 
-        $data = $this->personDetailService->fetchPersonalDetails($userEmail);
+        $data = $this->personDetailService->fetchPersonalDetails($user->email);
 
         if ($data) {
             $personalDetail = PersonalDetail::updateOrCreate(
-                ['email' => $userEmail],
+                ['user_id' => $user->id],
                 $data
             );
 
