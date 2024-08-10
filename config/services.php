@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'person_detail_api' => [
+        'url' => env('PERSON_DETAIL_API_URL', 'https://app.usergems.com/api/'),
+        'key' => env('PERSON_DETAIL_API_KEY'),
+    ],
+
 ];

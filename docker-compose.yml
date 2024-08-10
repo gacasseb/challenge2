@@ -17,6 +17,8 @@ services:
             XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
+            PERSON_DETAIL_API_URL: '${PERSON_DETAIL_API_URL}'
+            PERSON_DETAIL_API_KEY: '${PERSON_DETAIL_API_KEY}'
         volumes:
             - '.:/var/www/html'
         networks:
