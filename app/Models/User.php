@@ -45,8 +45,13 @@ class User extends Authenticatable
         ];
     }
 
-    public function personalDetail()
+    public function integrations()
     {
-        return $this->hasOne(PersonalDetail::class);
+        return $this->belongsToMany(Integration::class)->withPivot('api_key')->withTimestamps();
+    }
+
+    public function meetings()
+    {
+        return $this->belongsToMany(Meeting::class)->withPivot('status')->withTimestamps();
     }
 }

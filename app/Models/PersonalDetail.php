@@ -10,9 +10,10 @@ class PersonalDetail extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'email',
         'first_name',
         'last_name',
+        'title',
         'avatar',
         'linkedin_url',
         'companyName',
@@ -20,8 +21,8 @@ class PersonalDetail extends Model
         'companyEmployees',
     ];
 
-    public function user()
+    public function meetings()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(Meeting::class)->withPivot('status')->withTimestamps();
     }
 }

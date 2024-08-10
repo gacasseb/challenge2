@@ -40,4 +40,8 @@ return [
         'key' => env('PERSON_DETAIL_API_KEY'),
     ],
 
+    'calendar_api' => [
+        'url' => env('CALENDAR_API_URL', 'https://app.usergems.com/api/hiring/calendar-challenge'),
+    ],
+
 ];
