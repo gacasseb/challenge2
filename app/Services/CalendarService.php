@@ -35,7 +35,14 @@ class CalendarService
             $response = Http::withToken($token)->get("{$this->apiUrl}/events");
 
             if ($response->successful()) {
-                return $response->json();
+                $events = $response->json()['data'];
+                $currentDate = date('Y-m-d'); // Get the current date in YYYY-MM-DD format
+
+                $todayEvents = array_filter($events, function($event) use ($currentDate) {
+                    $eventDate = date('Y-m-d', strtotime($event['start']));
+                    return $eventDate === $currentDate;
+                });
+                return $todayEvents;
             } else {
                 return null;
             }

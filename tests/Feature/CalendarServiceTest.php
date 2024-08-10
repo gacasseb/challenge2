@@ -31,10 +31,33 @@ class CalendarServiceTest extends TestCase
 
         Http::fake([
             "{$this->apiUrl()}/events" => Http::response([
-                'events' => [
-                    ['id' => 1, 'title' => 'Event 1'],
-                    ['id' => 2, 'title' => 'Event 2'],
-                ],
+                'data' => [
+                    [
+                        'id' => 1,
+                        'title' => 'Event 1',
+                        'start' => '2024-08-10T10:00:00',
+                        'end' => '2024-08-10T11:00:00',
+                        'accepted' => ['seconduser@usergems.com'],
+                        'rejected' => ['person@example.com']
+                    ],
+                    [
+                        'id' => 2,
+                        'title' => 'Event 2',
+                        'start' => '2024-08-10T10:00:00',
+                        'end' => '2024-08-10T11:00:00',
+                        'accepted' => ['seconduser@usergems.com'],
+                        'rejected' => ['person@example.com'],
+                    ],
+                    // should not be included
+                    [
+                        'id' => 3,
+                        'title' => 'Event 2',
+                        'start' => '2024-08-09T10:00:00',
+                        'end' => '2024-08-09T11:00:00',
+                        'accepted' => ['seconduser@usergems.com'],
+                        'rejected' => ['person@example.com'],
+                    ],
+                ]
             ], 200),
         ]);
 
@@ -42,8 +65,8 @@ class CalendarServiceTest extends TestCase
         $events = $calendarService->fetchCalendarEvents($user);
 
         $this->assertNotNull($events);
-        $this->assertCount(2, $events['events']);
-        $this->assertEquals('Event 1', $events['events'][0]['title']);
-        $this->assertEquals('Event 2', $events['events'][1]['title']);
+        $this->assertCount(2, $events);
+        $this->assertEquals('Event 1', $events[0]['title']);
+        $this->assertEquals('Event 2', $events[1]['title']);
     }
 }
