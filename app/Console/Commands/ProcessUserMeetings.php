@@ -8,6 +8,7 @@ use App\Services\MeetingService;
 use App\Services\PersonDetailService;
 use App\Notifications\MeetingNotification;
 use App\Models\User;
+use App\Jobs\SendEmailJob;
 
 class ProcessUserMeetings extends Command
 {
@@ -34,18 +35,14 @@ class ProcessUserMeetings extends Command
 
         foreach ($users as $user) {
             $calendarEvents = $calendarService->fetchCalendarEvents($user);
+            $data = $meetingService->fetchMeetingInformation($user, $calendarEvents);
 
-            $meetingService->fetchMeetingInformation($user, $calendarEvents);
-
-            // Create the notification data
-            // $notificationData = [
-            //     'user' => $user,
-            //     'personalDetails' => $personalDetails,
-            //     'meetings' => $calendarEvents,
-            // ];
-
-            // Send notification
-            // Notification::send($user, new MeetingNotification($notificationData));
+            $email = [
+                'email' => $user->email,
+                'data' => json_encode($data),
+            ];
+            // send 8 AM today
+            SendEmailJob::dispatch($email)->delay(now()->startOfDay()->addHours(8));
         }
     }
 }

@@ -45,44 +45,37 @@ class MeetingService
     }
 
     protected function retrieveMeetingFromEvent($event, User $user) {
-        $meeting = Meeting::where('event_id', $event['id'])->first();
-        if (!$meeting) {
-            $meeting = Meeting::create([
-                'event_id' => $event['id'],
+        $meeting = Meeting::updateOrCreate(
+            ['event_id' => $event['id']],
+            [
                 'title' => $event['title'],
                 'start' => $event['start'],
                 'end' => $event['end'],
-            ]);
-        }
-
-        $meeting->update([
-            'title' => $event['title'],
-            'start' => $event['start'],
-            'end' => $event['end'],
-        ]);
+            ]
+        );
 
         $attendees = array_merge($event['accepted'], $event['rejected']);
 
-        $userEmails = array_filter($attendees, function ($email) {
-            return strpos($email, '@usergems.com') !== false;
-        });
-        $userIds = User::whereIn('email', $userEmails)->pluck('id');
-
-        $personEmails = array_filter($attendees, function ($email) {
-            return strpos($email, '@usergems.com') === false;
-        });
+        $userEmails = [];
+        $personEmails = [];
+        foreach ($attendees as $email) {
+            if (strpos($email, '@usergems.com') !== false) {
+                $userEmails[] = $email;
+            } else {
+                $personEmails[] = $email;
+            }
+        }
         
+        $userIds = User::whereIn('email', $userEmails)->pluck('id');
         $persons = [];
-        $personIds = [];
 
         foreach ($personEmails as $email) {
-            $person = $this->personDetailService->getPersonalDetails($email);
-            $personIds[] = $person->id;
+            $person = $this->personDetailService->getPersonDetails($email);
             $persons[$person->id] = $person;
         }
 
         $meeting->users()->syncWithoutDetaching($userIds);
-        $meeting->persons()->syncWithoutDetaching($personIds);
+        $meeting->persons()->syncWithoutDetaching(array_keys($persons));
 
         return $this->getMeetingDetails($meeting, $user, $persons);
     }

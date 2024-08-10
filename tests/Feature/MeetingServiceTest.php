@@ -60,7 +60,7 @@ class MeetingServiceTest extends TestCase
 
         $personDetailServiceMock = $this->createMock(PersonDetailService::class);
         $personDetailServiceMock->expects($this->once())
-            ->method('getPersonalDetails')
+            ->method('getPersonDetails')
             ->with('person@example.com')
             ->willReturn($person);
 

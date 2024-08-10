@@ -19,9 +19,8 @@ class PersonDetailService
         $this->apiKey = config('services.person_detail_api.key');
     }
 
-    public function getPersonalDetails($personEmail)
+    public function getPersonDetails($personEmail)
     {
-        var_dump("alooooooooou!!!!!");
         $personalDetail = PersonalDetail::where('email', $personEmail)->first();
 
         if ($personalDetail && $this->isFresh($personalDetail->updated_at)) {
